@@ -7,11 +7,12 @@ using namespace std;
 int mainmenu();
 
 int main(){
-    ofstream fp("");
-    while(!fp){
+    while(true){
         system("cls");
         cout << "Please insert a card.\n";
-        break;
+        ifstream fp("E:\\pin.code.txt");
+        if(fp)
+            break;
     }
     while(true){
         switch(mainmenu()){
@@ -27,7 +28,6 @@ int main(){
                 system("cls");
                 cout << "Invalid input! Please try again!\n";
                 system("pause");
-                return;
         }
     }
     return 0;
@@ -38,8 +38,9 @@ int mainmenu(){
     system("cls");
     cout << "WELCOME TO BANK!\n";
     cout << "AVAIL SERVICES:\n";
-    cout << "1.) Register.\n";
-    cout << "2.) Transaction.\n";
+    cout << "1.) Register (For new clients).\n";
+    cout << "2.) Transaction (Services for clients).\n";
+    cout << "3.) Eject ATM Card.\n";
     cout << "Select an option(1 - 2): ";
     cin >> op;
     return op;
