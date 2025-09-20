@@ -1,0 +1,2 @@
+g++ main.cpp Registration.cpp -o main
+./main

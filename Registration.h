@@ -5,7 +5,7 @@
 using namespace std;
 
 #define FILENAME "Account_Records.txt"
-#define v 120
+const int v = 120;
 
 struct Information {
     string Acc_Number, Name, Birthday, Con_Number, Pin_code;
