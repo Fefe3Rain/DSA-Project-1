@@ -27,7 +27,7 @@ class Register{
         Node *tail;
         string Name_Number(string fullname);
         string Birth_Number(string bday);
-        string Last4_Digits(string con_num);
+        string Last2_Digits(string con_num);
         string encrypt(string pin);
         string decrypt(string pin);
     public:
@@ -45,6 +45,7 @@ class Register{
         }
         string Acc_No_Generator(string fullname, string bday, string con_num);
         string Get_Pin_Code();
+        bool AntiDup(string fullname, string bday, string con_num);
         void Add(Information x);
         void Save();
         void Load();
@@ -55,16 +56,17 @@ int main(){
     Register Acc;
     Acc.Load();
     while(true){
-        system("cls");
-        cout << "Welcome to the Registration Page!\n";
-        cout << "Please fill in your information.\n";
-        cout << "Full Name (FN LN): ";
-        cin.ignore();
-        getline(cin, x.Name);
-        cout << "Birthday (MM/DD/YYYY): ";
-        getline(cin, x.Birthday);
-        cout << "Contact Number (09XXXXXXXXX): ";
-        getline(cin, x.Con_Number);
+        do{
+            system("cls");
+            cout << "Welcome to the Registration Page!\n";
+            cout << "Please fill in your information.\n";
+            cout << "Full Name (FN LN): ";
+            getline(cin, x.Name);
+            cout << "Birthday (MM/DD/YYYY): ";
+            getline(cin, x.Birthday);
+            cout << "Contact Number (09XXXXXXXXX): ";
+            getline(cin, x.Con_Number);
+        } while (Acc.AntiDup(x.Name, x.Birthday, x.Con_Number));
         x.Acc_Number = Acc.Acc_No_Generator(x.Name, x.Birthday, x.Con_Number);
         cout << "Generating Account Number...\n";
         Sleep(1500);
@@ -79,8 +81,10 @@ int main(){
         } while (confirm != x.Pin_code);
         cout << "Pin code is now saved and encrypted: " << x.Pin_code << endl;
         system("pause");
-        cout << "Please Deposit an initial amount of balance (5000.00 min.): ";
-        cin >> x.Balance;
+        do{
+            cout << "Please Deposit an initial amount of balance (5000.00 min.): ";
+            cin >> x.Balance;
+        }while(x.Balance < 5000.00);
         cout << "Processing...";
         Sleep(1500);
         cout << "\nCongratulations! Account number: " << x.Acc_Number << " is successfully added to the system." << endl;
@@ -93,37 +97,39 @@ int main(){
 }
 
 string Register::Name_Number(string fullname){
-    int count = 0, fn = 0, ln = 0;
+    int count = 0, fn = 0;
     bool firstDone = false;
     for (char c : fullname){
         if (c != ' ')
             count++;
-        else {
+        else{
             fn = count;
             count = 0;
             firstDone = true;
         }
+        if (count > 9) 
+            count - 1;
     }
-    ln = count;
-    return to_string(fn) + to_string(ln);
+    return to_string(count);
 }
-string Register::Birth_Number(string bday){
+string Register::Birth_Number(string bday) {
     string birthNum = "";
-    for (char c : bday)
-        if (c != '/')
-            birthNum += c;
+    if (bday.size() > 4) {
+        birthNum += bday[1];
+        birthNum += bday[4]; 
+    }
     return birthNum;
 }
-string Register::Last4_Digits(string con_num){
-    string last4 = con_num.substr(con_num.length() - 4);
-    return last4;  
+string Register::Last2_Digits(string con_num){
+    string last2 = con_num.substr(con_num.length() - 2);
+    return last2;  
 }
 string Register::Acc_No_Generator(string fullname, string bday, string con_num) {
     string fln = Name_Number(fullname);
     string bn = Birth_Number(bday);
-    string l4 = Last4_Digits(con_num);
+    string l2 = Last2_Digits(con_num);
 
-    string acc_no = fln + bn + l4;
+    string acc_no = fln + bn + l2;
     return acc_no;
 }
 string Register::Get_Pin_Code(){
@@ -156,6 +162,18 @@ string Register::decrypt(string pin){
     for (int i = 0; i < pin.size(); i++)
         pin[i] = pin[i] / v - v;
     return pin;
+}
+bool Register::AntiDup(string fullname, string bday, string con_num){
+    Node *post = head;
+    while (post != NULL){
+        if (post->Data.Name == fullname && post->Data.Birthday == bday && post->Data.Con_Number == con_num){
+            cout << "Account already exists! Delete this account/Create a new one!\n";
+            system("pause");
+            return true;
+        }
+        post = post->next;
+    }
+    return false;
 }
 void Register::Add(Information x){
     Node *newNode;

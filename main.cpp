@@ -1,12 +1,16 @@
+#include "Registration.h"
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+#include <windows.h>
 #include <cstdlib>
 
 using namespace std;
 
-int mainmenu();
-
 int main(){
+    Information x;
+    Register Acc;
+    Acc.Load();
     while(true){
         system("cls");
         cout << "Please insert a card.\n";
@@ -14,34 +18,57 @@ int main(){
         if(fp)
             break;
     }
-    while(true){
-        switch(mainmenu()){
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                system("cls");
-                cout << "Thank you for using our services. Ejecting card...\n";
-                exit(0);
-            default:
-                system("cls");
-                cout << "Invalid input! Please try again!\n";
+    ifstream fp("E:\\pin.code.txt");
+    string line;
+    while (getline(fp, line)){
+        if(line.empty()){
+            while (true) {
+                do {
+                    system("cls");
+                    cout << "Welcome to the Registration Page!\n";
+                    cout << "Please fill in your information.\n";
+                    cout << "Full Name (FN LN): ";
+                    getline(cin, x.Name);
+                    cout << "Birthday (MM/DD/YYYY): ";
+                    getline(cin, x.Birthday);
+                    cout << "Contact Number (09XXXXXXXXX): ";
+                    getline(cin, x.Con_Number);
+                } while (Acc.AntiDup(x.Name, x.Birthday, x.Con_Number));
+
+                x.Acc_Number = Acc.Acc_No_Generator(x.Name, x.Birthday, x.Con_Number);
+                cout << "Generating Account Number...\n";
+                Sleep(1500);
+                cout << "Your account number is: " << x.Acc_Number << endl;
                 system("pause");
+
+                string confirm;
+                do {
+                    cout << "Please enter a 6 digit Pin Code: ";
+                    x.Pin_code = Acc.Get_Pin_Code();
+                    cout << "Please confirm your Pin Code: ";
+                    confirm = Acc.Get_Pin_Code();
+                } while (confirm != x.Pin_code);
+
+                cout << "Pin code is now saved and encrypted: " << x.Pin_code << endl;
+                system("pause");
+
+                do {
+                    cout << "Please Deposit an initial amount of balance (5000.00 min.): ";
+                    cin >> x.Balance;
+                } while (x.Balance < 5000.00);
+
+                cout << "Processing...";
+                Sleep(1500);
+                cout << "\nCongratulations! Account number: " << x.Acc_Number << " is successfully added.\n";
+                system("pause");
+
+                Acc.Add(x);
+                Acc.Save();
+                break;
+            }
+        } else {
+
         }
     }
     return 0;
-}
-
-int mainmenu(){
-    int op;
-    system("cls");
-    cout << "WELCOME TO BANK!\n";
-    cout << "AVAIL SERVICES:\n";
-    cout << "1.) Register (For new clients).\n";
-    cout << "2.) Transaction (Services for clients).\n";
-    cout << "3.) Eject ATM Card.\n";
-    cout << "Select an option(1 - 2): ";
-    cin >> op;
-    return op;
 }
