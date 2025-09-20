@@ -115,15 +115,12 @@ void Register::Save() {
         system("pause");
         return;
     }
-    while (post != NULL) {
-        fp << post->Data.Acc_Number << ","
-           << post->Data.Name << ","
-           << post->Data.Birthday << ","
-           << post->Data.Con_Number << ","
-           << post->Data.Pin_code << ","
-           << post->Data.Balance << endl;
-        post = post->next;
-    }
+    fp << post->Data.Acc_Number << ","
+        << post->Data.Name << ","
+        << post->Data.Birthday << ","
+        << post->Data.Con_Number << ","
+        << post->Data.Pin_code << ","
+        << post->Data.Balance << endl;
     fp.close();
 }
 
