@@ -240,7 +240,7 @@ void Transact::Fund_Trans(Node* p){
             cout << "Contact Number:   " << r->Data.Con_Number << endl;
             cout << "Previous Balance: " << r->Data.Balance << endl;
             cout << "Deposited Amount: " << amnt << endl;
-            p->Data.Balance += amnt;
+            r->Data.Balance += amnt;
             cout << "Remaining Balance:" << r->Data.Balance << endl;
             amnt = 0;
             system("pause");
