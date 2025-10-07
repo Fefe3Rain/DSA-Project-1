@@ -3,6 +3,8 @@
 #include <fstream>
 #include <conio.h>
 #include <cstdlib>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -115,12 +117,15 @@ void Register::Save() {
         system("pause");
         return;
     }
-    fp << post->Data.Acc_Number << ","
+    while (post != NULL){
+        fp << post->Data.Acc_Number << ","
         << post->Data.Name << ","
         << post->Data.Birthday << ","
         << post->Data.Con_Number << ","
         << post->Data.Pin_code << ","
         << post->Data.Balance << endl;
+        post = post->next;
+    }
     fp.close();
 }
 
@@ -134,21 +139,18 @@ void Register::Load() {
     }
     string line;
     while (getline(fp, line)) {
-        if (line.empty()) continue;
-        size_t pos = 0, prev = 0;
-        string fields[6];
-        int idx = 0;
-        while ((pos = line.find(',', prev)) != string::npos && idx < 5) {
-            fields[idx++] = line.substr(prev, pos - prev);
-            prev = pos + 1;
-        }
-        fields[idx] = line.substr(prev);
-        d.Acc_Number = fields[0];
-        d.Name = fields[1];
-        d.Birthday = fields[2];
-        d.Con_Number = fields[3];
-        d.Pin_code = fields[4];
-        d.Balance = stof(fields[5]);
+        if (line.empty())
+            continue;
+        stringstream ss(line);
+        string balance;
+        getline(ss, d.Acc_Number, ',');
+        getline(ss, d.Name, ',');
+        getline(ss, d.Birthday, ',');
+        getline(ss, d.Con_Number, ',');
+        getline(ss, d.Pin_code, ',');
+        getline(ss, balance, ',');
+
+        d.Balance = stof(balance);
         decrypt(d.Pin_code);
         Add(d);
     }

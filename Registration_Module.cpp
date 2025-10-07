@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
-#include <windows.h>
 #include <string>
 #include <conio.h>
+#include <sstream>
 
 using namespace std;
 
@@ -69,7 +69,6 @@ int main(){
         } while (Acc.AntiDup(x.Name, x.Birthday, x.Con_Number));
         x.Acc_Number = Acc.Acc_No_Generator(x.Name, x.Birthday, x.Con_Number);
         cout << "Generating Account Number...\n";
-        Sleep(1500);
         cout << "Your account number is: " << x.Acc_Number << endl;
         system("pause");
         string confirm;
@@ -86,7 +85,6 @@ int main(){
             cin >> x.Balance;
         }while(x.Balance < 5000.00);
         cout << "Processing...";
-        Sleep(1500);
         cout << "\nCongratulations! Account number: " << x.Acc_Number << " is successfully added to the system." << endl;
         system("pause");
         Acc.Add(x);
@@ -204,7 +202,7 @@ void Register::Save() {
 }
 void Register::Load() {
     Information d;
-    ifstream fp(FILENAME); // Use the correct filename
+    ifstream fp(FILENAME);
     if (!fp) {
         cout << "No saved records found.\n";
         system("pause");
@@ -214,20 +212,17 @@ void Register::Load() {
     while (getline(fp, line)) {
         if (line.empty())
             continue;
-        size_t pos = 0, prev = 0;
-        string fields[6];
-        int idx = 0;
-        while ((pos = line.find(',', prev)) != string::npos && idx < 5) {
-            fields[idx++] = line.substr(prev, pos - prev);
-            prev = pos + 1;
-        }
-        fields[idx] = line.substr(prev); // Last field (Balance)
-        d.Acc_Number = fields[0];
-        d.Name = fields[1];
-        d.Birthday = fields[2];
-        d.Con_Number = fields[3];
-        d.Pin_code = fields[4];
-        d.Balance = stof(fields[5]);
+        stringstream ss(line);
+        string balance;
+        getline(ss, d.Acc_Number, ',');
+        getline(ss, d.Name, ',');
+        getline(ss, d.Birthday, ',');
+        getline(ss, d.Con_Number, ',');
+        getline(ss, d.Pin_code, ',');
+        getline(ss, balance, ',');
+
+        d.Balance = stof(balance);
+
         decrypt(d.Pin_code);
         Add(d);
     }

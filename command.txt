@@ -1,2 +1,4 @@
 g++ main.cpp Registration.cpp -o main
 ./main
+
+g++ main.cpp Registration.cpp Transaction.cpp -o main
